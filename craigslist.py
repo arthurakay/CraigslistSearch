@@ -1,7 +1,7 @@
 #!/usr/bin/env python
-
 from datetime import date, datetime, timedelta
 from dateutil.parser import parse
+
 from lxml import html
 import requests
 
@@ -32,35 +32,51 @@ searchTerms = [
     'penetration'
 ]
 
-yesterday = date.today() - timedelta(1)
-yesterday = datetime(yesterday.year, yesterday.month, yesterday.day)
-
 url = 'https://{0}.craigslist.org/search/ggg?query={1}&sort=date'
 link = '<li><a href="{0}" target="_blank">{1}</a></li>'
 
-print('<html><head></head><body>')
+def getCraigslistPosts(yesterday):
+    global cities
+    global searchTerms
+    global emailMessage
 
-for key, value in cities.items():
-    print('<h2>{0}</h2>'.format(value))
+    content = []
+    emailMessage = ''
 
-    for term in searchTerms:
-        print('<h3>Search: {0}</h3>'.format(term))
+    content.append('<html><head></head><body>')
 
-        page = requests.get(url.format(key, term))
-        tree = html.fromstring(page.content)
+    for key, value in cities.items():
+        content.append('<h2>{0}</h2>'.format(value))
 
-        postings = tree.xpath('//a[contains(@class, "result-title")]/@href')
-        titles = tree.xpath('//a[contains(@class, "result-title")]/text()')
-        dates = tree.xpath('//time[contains(@class, "result-date")]/@title')
+        for term in searchTerms:
+            content.append('<h3>Search: {0}</h3>'.format(term))
 
-        print('<ul>')
+            page = requests.get(url.format(key, term))
+            tree = html.fromstring(page.content)
 
-        for i in range(len(postings)):
-            postDate = parse(dates[i])
+            postings = tree.xpath('//a[contains(@class, "result-title")]/@href')
+            titles = tree.xpath('//a[contains(@class, "result-title")]/text()')
+            dates = tree.xpath('//time[contains(@class, "result-date")]/@title')
 
-            if postDate > yesterday:
-                print(link.format(postings[i], titles[i]))
+            content.append('<ul>')
 
-        print('</ul>')
+            for i in range(len(postings)):
+                postDate = parse(dates[i])
 
-print('</body></html>')
+                if postDate > yesterday:
+                    content.append(link.format(postings[i], titles[i]))
+
+            content.append('</ul>')
+
+    content.append('</body></html>')
+    emailMessage = emailMessage.join(content)
+    return emailMessage
+
+def main():
+    yesterday = date.today() - timedelta(1)
+    yesterday = datetime(yesterday.year, yesterday.month, yesterday.day)
+    content = getCraigslistPosts(yesterday)
+    print(content)
+
+if __name__ == '__main__':
+    main()
