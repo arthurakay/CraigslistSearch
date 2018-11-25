@@ -46,11 +46,9 @@ def getCraigslistPosts(yesterday):
     content.append('<html><head></head><body>')
 
     for key, value in cities.items():
-        content.append('<h2>{0}</h2>'.format(value))
+        newSearchResults = []
 
         for term in searchTerms:
-            content.append('<h3>Search: {0}</h3>'.format(term))
-
             page = requests.get(url.format(key, term))
             tree = html.fromstring(page.content)
 
@@ -58,15 +56,25 @@ def getCraigslistPosts(yesterday):
             titles = tree.xpath('//a[contains(@class, "result-title")]/text()')
             dates = tree.xpath('//time[contains(@class, "result-date")]/@title')
 
-            content.append('<ul>')
+            newPostings = []
 
             for i in range(len(postings)):
                 postDate = parse(dates[i])
 
                 if postDate > yesterday:
-                    content.append(link.format(postings[i], titles[i]))
+                    newPostings.append(link.format(postings[i], titles[i]))
 
-            content.append('</ul>')
+            if (len(newPostings) > 0):
+                newPostings.insert(0, '<ul>')
+                newPostings.append('</ul>')
+                newPostings.insert(0, '<h3>Search: {0}</h3>'.format(term))
+
+                # merge the lists
+                newSearchResults = newSearchResults + newPostings
+
+        if (len(newSearchResults) > 0):
+            newSearchResults.insert(0, '<h2>{0}</h2>'.format(value))
+            content = content + newSearchResults
 
     content.append('</body></html>')
     emailMessage = emailMessage.join(content)
