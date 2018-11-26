@@ -32,7 +32,11 @@ searchTerms = [
     'penetration'
 ]
 
-url = 'https://{0}.craigslist.org/search/ggg?query={1}&sort=date'
+urls = {
+    'Gigs': 'https://{0}.craigslist.org/search/ggg?query={1}&sort=date',
+    'Jobs (part-time, contact, remote)': 'https://{0}.craigslist.org/search/sof?query={1}&is_telecommuting=1&employment_type=2&employment_type=3&sort=date'
+}
+
 link = '<li><a href="{0}" target="_blank">{1}</a></li>'
 
 def getCraigslistPosts(yesterday):
@@ -43,39 +47,48 @@ def getCraigslistPosts(yesterday):
     content = []
     emailMessage = ''
 
-    content.append('<html><head></head><body>')
-
-    for key, value in cities.items():
+    for searchType, url in urls.items():
         newSearchResults = []
 
-        for term in searchTerms:
-            page = requests.get(url.format(key, term))
-            tree = html.fromstring(page.content)
+        for key, city in cities.items():
+            results = []
 
-            postings = tree.xpath('//a[contains(@class, "result-title")]/@href')
-            titles = tree.xpath('//a[contains(@class, "result-title")]/text()')
-            dates = tree.xpath('//time[contains(@class, "result-date")]/@title')
+            for term in searchTerms:
+                page = requests.get(url.format(key, term))
+                tree = html.fromstring(page.content)
 
-            newPostings = []
+                postings = tree.xpath('//a[contains(@class, "result-title")]/@href')
+                titles = tree.xpath('//a[contains(@class, "result-title")]/text()')
+                dates = tree.xpath('//time[contains(@class, "result-date")]/@title')
 
-            for i in range(len(postings)):
-                postDate = parse(dates[i])
+                newPostings = []
 
-                if postDate > yesterday:
-                    newPostings.append(link.format(postings[i], titles[i]))
+                for i in range(len(postings)):
+                    postDate = parse(dates[i])
 
-            if (len(newPostings) > 0):
-                newPostings.insert(0, '<ul>')
-                newPostings.append('</ul>')
-                newPostings.insert(0, '<h3>Search: {0}</h3>'.format(term))
+                    if postDate > yesterday:
+                        newPostings.append(link.format(postings[i], titles[i]))
 
-                # merge the lists
-                newSearchResults = newSearchResults + newPostings
+                if (len(newPostings) > 0):
+                    newPostings.insert(0, '<ul>')
+                    newPostings.append('</ul>')
+                    newPostings.insert(0, '<h4>Search: {0}</h4>'.format(term))
+
+                    # merge the lists
+                    results = results + newPostings
+
+            if (len(results) > 0):
+                results.insert(0, '<h3>{0}</h3>'.format(city))
+                newSearchResults = newSearchResults + results
 
         if (len(newSearchResults) > 0):
-            newSearchResults.insert(0, '<h2>{0}</h2>'.format(value))
+            newSearchResults.insert(0, '<h2>{0}'.format(searchType))
             content = content + newSearchResults
 
+    if (len(content) == 0):
+        content.append('<p>No search results available over the past 24 hours.</p>')
+
+    content.insert(0, '<html><head></head><body>')
     content.append('</body></html>')
     emailMessage = emailMessage.join(content)
     return emailMessage
