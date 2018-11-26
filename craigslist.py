@@ -6,21 +6,32 @@ from lxml import html
 import requests
 
 cities = {
+    'annapolis': 'Annapolis, MD',
+    'atlanta': 'Atlanta, GA',
     'austin': 'Austin, TX',
     'baltimore': 'Baltimore, MD',
     'boston': 'Boston, MA',
+    'charleston': 'Charleston, SC',
     'charlotte': 'Charlotte, NC',
     'chicago': 'Chicago, IL',
     'cleveland': 'Cleveland, OH',
+    'dallas': 'Dallas, TX',
     'denver': 'Denver, CO',
     'frederick': 'Frederick, MD',
+    'houston': 'Houston, TX',
+    'knoxville': 'Knoxville, TN',
     'losangeles': 'Los Angeles, CA',
     'madison': 'Madison, WI',
     'milwaukee': 'Milwaukee, WI',
     'newyork': 'New York, NY',
+    'phoenix': 'Phoenix, AZ',
     'philadelphia': 'Philadelphia, PA',
+    'portland': 'Portland, OR',
     'racine': 'Kenosha-Racine, WI',
+    'raleigh': 'Raleigh / Duraham, NC',
     'saltlakecity': 'Salt Lake City, UT',
+    'sanantonio': 'San Antonio, TX',
+    'sandiego': 'San Diego, CA',
     'sfbay': 'San Francisco, CA',
     'washingtondc': 'Washington DC'
 }
