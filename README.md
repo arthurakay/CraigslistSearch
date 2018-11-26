@@ -21,6 +21,16 @@ You'll need the following environment variables set:
     
 ### Run the script
 
-    python craigslist.py
+    python craigslist.py > results.html
     
 That will create an HTML file `results.html` allowing you to click the individual search results.
+
+### Deployment on Heroku
+
+Create a new app on Heroku (free dynos), and connect the repo; enable automated deployments when changes are detected.
+
+Next, install `Heroku Scheduler`. Heroku should detect `Procfile`, and you can configure `Heroku Scheduler` to run that command.
+
+Finally, add the necessary environment variables (see above).
+
+The result will be an email sent once per day containing your Craigslist search results!
