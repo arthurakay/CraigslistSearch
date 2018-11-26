@@ -2,7 +2,7 @@
 from datetime import date, datetime, timedelta
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-import json
+import os
 import smtplib
 import sys
 
@@ -13,9 +13,15 @@ yesterday = datetime(yesterday.year, yesterday.month, yesterday.day)
 
 emailMessage = getCraigslistPosts(yesterday)
 
-# get SMTP credentials
-with open('creds.json', 'r', encoding='utf-8') as creds:
-    CREDENTIALS = json.load(creds)
+CREDENTIALS = {
+    "smtp_server": os.environ.get('smtp_server'),
+    "smtp_port": os.environ.get('smtp_port'),
+    "smtp_username": os.environ.get('smtp_username'),
+    "smtp_password": os.environ.get('smtp_password'),
+
+    "email_from": os.environ.get('email_from'),
+    "email_to": os.environ.get('email_to'),
+}
 
 # set up the SMTP server
 try:
