@@ -70,7 +70,7 @@ def getCraigslistPosts(yesterday):
 
                 postings = tree.xpath('//a[contains(@class, "result-title")]/@href')
                 titles = tree.xpath('//a[contains(@class, "result-title")]/text()')
-                dates = tree.xpath('//time[contains(@class, "result-date")]/@title')
+                dates = tree.xpath('//time[contains(@class, "result-date")]/@datetime')
 
                 newPostings = []
 
