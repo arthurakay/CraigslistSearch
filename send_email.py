@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-from datetime import date, datetime, timedelta
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 import os
@@ -8,10 +7,7 @@ import sys
 
 from craigslist import getCraigslistPosts
 
-yesterday = date.today() - timedelta(1)
-yesterday = datetime(yesterday.year, yesterday.month, yesterday.day)
-
-emailMessage = getCraigslistPosts(yesterday)
+emailMessage = getCraigslistPosts()
 
 CREDENTIALS = {
     "smtp_server": os.environ.get('smtp_server'),

@@ -131,6 +131,21 @@ def getAllPostsPerCity(url):
     return results
 
 
+def setTime():
+    '''
+    Set the value of "yesterday" for use throughout this script
+
+    Args:
+        n/a
+
+    Returns:
+        n/a
+    '''
+    global yesterday
+    yesterday = date.today() - timedelta(1)
+    yesterday = datetime(yesterday.year, yesterday.month, yesterday.day)
+
+
 def getCraigslistPosts():
     '''
     Perform a deep loop over our search criteria and return the related posts
@@ -145,6 +160,8 @@ def getCraigslistPosts():
 
     content = []
     emailMessage = ''
+
+    setTime()
 
     for searchType, url in urls.items():
         results = getAllPostsPerCity(url)
@@ -163,10 +180,6 @@ def getCraigslistPosts():
 
 
 def main():
-    global yesterday
-    yesterday = date.today() - timedelta(1)
-    yesterday = datetime(yesterday.year, yesterday.month, yesterday.day)
-
     content = getCraigslistPosts()
     print(content)
 
