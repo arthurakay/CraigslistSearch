@@ -39,6 +39,11 @@ cities = {
 searchTerms = [
     'javascript',
     'python',
+    'angular',
+    'react',
+    'node',
+    'front-end',
+    'frontend',
     'pentest',
     'penetration'
 ]
